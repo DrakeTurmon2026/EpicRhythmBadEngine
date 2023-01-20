@@ -52,6 +52,7 @@ running = True
 laneone.append(Note())
 
 timer = 0.3
+health = 100
 
 while running:
     deltatime = clock.tick(clock.get_fps())/1000
@@ -85,22 +86,23 @@ while running:
                 
     
     screen.fill((21, 72, 63))
-    #bg
-    pygame.draw.rect(screen, (51, 102, 93),pygame.rect.Rect(margin,0,320,500))
+    if health > 0:
+        pygame.draw.rect(screen, (51, 102, 93),pygame.rect.Rect(margin,0,320,500))
 
-    #hitline
-    pygame.draw.rect(screen, (171, 154, 89),pygame.rect.Rect(margin,460-15,320,30))
-    #lanelines
-    for i in range(0,5):
-        pygame.draw.rect(screen, (255,175,135),pygame.rect.Rect((80 * i) + margin,0,1,500))
-
-    for i, lane in enumerate(alllanes):
-        if len(lane) > 0:
-            for num, note in enumerate(lane):
-                note.update(deltatime)
-                pygame.draw.rect(screen, notecolor, pygame.rect.Rect(margin + (80*i),note.position,80,note.height))
-                if note.position >= note.killpos:
-                    lane.pop(num)
+        #hitline
+        pygame.draw.rect(screen, (171, 154, 89),pygame.rect.Rect(margin,460-15,320,30))
+        #lanelines
+        for i in range(0,5):
+            pygame.draw.rect(screen, (255,175,135),pygame.rect.Rect((80 * i) + margin,0,1,500))
+        
+        for i, lane in enumerate(alllanes):
+            if len(lane) > 0:
+                for num, note in enumerate(lane):
+                    note.update(deltatime)
+                    pygame.draw.rect(screen, notecolor, pygame.rect.Rect(margin + (80*i),note.position,80,note.height))
+                    if note.position >= note.killpos:
+                        lane.pop(num)
+                        health -= 5
 
     if len(timingindicators) > 0:
         for i, ind in enumerate(timingindicators):
@@ -108,6 +110,8 @@ while running:
             ind.timeleft -= deltatime
             if ind.timeleft <= 0:
                 timingindicators.pop(i)
+
+    pygame.draw.rect(screen, (255,255,255), pygame.rect.Rect(margin + (360) + 20,200,4,health*2))
 
     pygame.display.flip()
 
